@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Structures Google Ads par KPI — Marché bilingue FR/EN</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f5f5f5;
+    --surface2: #ebebeb;
+    --border: #cccccc;
+    --text: #111111;
+    --muted: #555555;
+    --fr-bg: #dbeafe;
+    --fr-text: #1e3a8a;
+    --en-bg: #d1fae5;
+    --en-text: #064e3b;
+    --shared-bg: #fef3c7;
+    --shared-text: #78350f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  header {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .label-top {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* LÉGENDE */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .legend-pill {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .pill-fr { background: var(--fr-bg); color: var(--fr-text); }
+  .pill-en { background: var(--en-bg); color: var(--en-text); }
+  .pill-shared { background: var(--shared-bg); color: var(--shared-text); }
+
+  /* KPI TABS */
+  .kpi-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .kpi-tab {
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .kpi-tab .dot { width: 7px; height: 7px; border-radius: 50%; background: #111; flex-shrink: 0; }
+  .kpi-tab:hover { border-color: var(--muted); color: var(--text); }
+  .kpi-tab.active { border-color: var(--text); background: var(--surface2); color: var(--text); }
+
+  /* PANELS */
+  .panel { display: none; animation: fadeIn 0.3s ease; }
+  .panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* KPI HERO */
+  .kpi-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 700px) { .kpi-hero { grid-template-columns: 1fr; } }
+
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .kpi-card.main {
+    border-left: 3px solid #111;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  @media (max-width: 700px) { .kpi-card.main { flex-direction: column; } }
+
+  .kpi-icon { font-size: 40px; flex-shrink: 0; line-height: 1; }
+  .kpi-meta { flex: 1; }
+
+  .kpi-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 4px;
+  }
+
+  .kpi-def {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+
+  .kpi-formula {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #111;
+    background: #eee;
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .info-card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .info-list { list-style: none; }
+  .info-list li {
+    font-size: 13px;
+    color: var(--text);
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .info-list li::before { content: '—'; color: var(--muted); flex-shrink: 0; }
+  .info-list li:last-child { border-bottom: none; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 36px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* TREE */
+  .tree {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+
+  .tree-header {
+    background: #e8e8e8;
+    padding: 14px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #333;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tree-body { padding: 8px 0; }
+
+  .tree-node {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 20px;
+    transition: background 0.15s;
+  }
+  .tree-node:hover { background: rgba(0,0,0,0.02); }
+
+  /* Ligne de séparation entre campagnes */
+  .tree-node.camp-sep { margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--border); }
+
+  .tree-indent { width: 20px; flex-shrink: 0; }
+  .tree-connector {
+    width: 20px;
+    flex-shrink: 0;
+    color: var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    margin-top: 1px;
+    user-select: none;
+  }
+
+  .node-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-right: 10px;
+    margin-top: 2px;
+  }
+
+  .badge-campaign { background: #e0e0e0; color: #111; border: 1px solid #aaa; }
+  .badge-adgroup  { background: #f5f5f5; color: #333; border: 1px solid #ccc; }
+  .badge-keyword  { background: transparent; color: #555; border: 1px dashed #bbb; }
+  .badge-note     { background: transparent; color: #888; border: 1px dashed #ddd; font-style: italic; }
+
+  .node-content { flex: 1; min-width: 0; }
+  .node-label {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 400;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .node-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    font-family: 'DM Mono', monospace;
+    line-height: 1.5;
+  }
+
+  .node-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    background: #eee;
+    color: #111;
+    white-space: nowrap;
+  }
+
+  /* LANG PILLS dans le tree */
+  .lp {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .lp-fr { background: var(--fr-bg); color: var(--fr-text); }
+  .lp-en { background: var(--en-bg); color: var(--en-text); }
+  .lp-shared { background: var(--shared-bg); color: var(--shared-text); }
+
+  /* NOTE BILINGUE */
+  .bilingual-note {
+    background: #fffbeb;
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #78350f;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .bilingual-note .icon { flex-shrink: 0; font-size: 14px; }
+
+  /* SETTINGS */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .setting-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .setting-key {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .setting-val { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .setting-note { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* PITFALLS & TIPS */
+  .pitfalls, .tips {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .pitfall, .tip {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 12px;
+    color: #111;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .pitfall .icon, .tip .icon { flex-shrink: 0; font-size: 14px; }
+
+  .page-footer {
+    margin-top: 60px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="label-top">// Google Ads — Structures par KPI · Marché bilingue FR/EN</div>
+    <h1>Architectures de campagnes<br><span style="color:#111">selon le KPI principal</span></h1>
+    <p class="subtitle">Structures optimisées pour un marché bilingue français/anglais. Chaque structure intègre la logique de séparation FR/EN là où elle génère un gain stratégique réel.</p>
+  </header>
+
+  <!-- LÉGENDE -->
+  <div class="legend">
+    <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-right:4px;">Légende</span>
+    <div class="legend-item"><span class="legend-pill pill-fr">FR</span> Campagne française séparée — mots-clés, annonces et page de destination en français</div>
+    <div class="legend-item"><span class="legend-pill pill-en">EN</span> Campagne anglaise séparée — mots-clés, annonces et page de destination en anglais</div>
+    <div class="legend-item"><span class="legend-pill pill-shared">FR + EN</span> Campagne unique avec assets bilingues — Google sert la bonne langue selon l'utilisateur</div>
+  </div>
+
+  <!-- KPI TABS -->
+  <nav class="kpi-nav">
+    <button class="kpi-tab active" data-kpi="roas"><span class="dot"></span>ROAS — E-commerce</button>
+    <button class="kpi-tab" data-kpi="cpa"><span class="dot"></span>CPA — Acquisition client</button>
+    <button class="kpi-tab" data-kpi="leads"><span class="dot"></span>CPL — Génération de leads</button>
+    <button class="kpi-tab" data-kpi="notoriete"><span class="dot"></span>CPM — Notoriété</button>
+    <button class="kpi-tab" data-kpi="volume"><span class="dot"></span>CPC — Volume de trafic</button>
+  </nav>
+
+  <!-- ======================== ROAS ======================== -->
+  <div class="panel active" id="panel-roas">
+
+    <div class="kpi-hero">
+      <div class="kpi-card main">
+        <div class="kpi-icon">🛒</div>
+        <div class="kpi-meta">
+          <div class="kpi-name">ROAS — Return On Ad Spend</div>
+          <div class="kpi-def">Mesure combien de revenus sont générés pour chaque dollar dépensé en publicité. KPI roi du e-commerce où chaque conversion a une valeur monétaire distincte.</div>
+          <div class="kpi-formula">ROAS = Revenus générés ÷ Dépenses publicitaires · ex : 8 000 $ revenus / 2 000 $ dépensés = ROAS 4,0</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Contexte idéal</div>
+        <ul class="info-list">
+          <li>Boutique e-commerce avec catalogue de produits</li>
+          <li>Valeurs de commandes variables</li>
+          <li>Minimum 30–50 conversions/mois</li>
+          <li>Suivi d'achat avec valeur configuré</li>
+        </ul>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Benchmarks industrie</div>
+        <ul class="info-list">
+          <li>Mode / Beauté : ROAS 3–5x typique</li>
+          <li>Électronique : ROAS 5–8x</li>
+          <li>Alimentation : ROAS 2–4x</li>
+          <li>ROAS cible minimum recommandé : 3x</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bilingual-note"><span class="icon">🌐</span><div><strong>Logique bilingue ROAS :</strong> Brand et Shopping sont dupliqués FR/EN car les mots-clés de produits et les requêtes d'achat diffèrent selon la langue (ex : "manteau femme" ≠ "women's coat"). PMax est une campagne unique avec des asset groups distincts par langue et par catégorie — Google détecte la langue du navigateur et sert les bons assets automatiquement. RLSA est dupliqué FR/EN pour que les messages de relance soient dans la langue de l'abandon de panier. Les budgets Brand sont scindés en deux moitiés égales (7,5 % chacun), idem pour le RLSA.</div></div>
+
+    <div class="section-title">Structure de compte recommandée</div>
+
+    <div class="tree">
+      <div class="tree-header">Compte Google Ads — E-commerce multi-catégories · Marché bilingue</div>
+      <div class="tree-body">
+
+        <!-- BRAND FR -->
+        <div class="tree-node">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🏷️ Brand — [NomMarque] Search <span class="node-tag">Priorité haute</span></div>
+            <div class="node-sub">Stratégie : Target ROAS · Budget : 7,5 % · Réseau : Search uniquement · Langue cible : français · Géo : CA + zones FR</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Marque exacte FR</div><div class="node-sub">[nommarque] · [nommarque.ca] · Exact match · Annonces : CTA "Magasinez maintenant" + extension d'appel</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Marque + produit FR</div><div class="node-sub">[nommarque chaussures] · [nommarque livraison gratuite] · Expression match</div></div></div>
+
+        <!-- BRAND EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🏷️ Brand — [BrandName] Search <span class="node-tag">High priority</span></div>
+            <div class="node-sub">Strategy: Target ROAS · Budget: 7.5% · Network: Search only · Target language: English · Geo: CA + EN zones</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Exact brand EN</div><div class="node-sub">[brandname] · [brandname.ca] · Exact match · Ads: CTA "Shop now" + call extension</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Brand + product EN</div><div class="node-sub">[brandname shoes] · [brandname free shipping] · Phrase match</div></div></div>
+
+        <!-- SHOPPING FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🛍️ Shopping Standard — Bestsellers <span class="node-tag">CPC max → tROAS</span></div>
+            <div class="node-sub">Stratégie : Target ROAS 500 % · Budget : 15 % · Priorité : Haute · Flux produits : titres et descriptions en français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Top 20 produits FR (80 % du CA)</div><div class="node-sub">Labels custom : bestseller=1 · Titres de flux en français · Enchères individuelles par produit</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-keyword">négatif</span><div class="node-content"><div class="node-label">Exclure : tous les mots-clés Brand FR</div><div class="node-sub">Éviter la cannibalisation avec la campagne Brand FR</div></div></div>
+
+        <!-- SHOPPING EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🛍️ Shopping Standard — Bestsellers <span class="node-tag">Manual CPC → tROAS</span></div>
+            <div class="node-sub">Strategy: Target ROAS 500% · Budget: 15% · Priority: High · Product feed: English titles and descriptions</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Top 20 products EN (80% of revenue)</div><div class="node-sub">Custom labels: bestseller=1 · English feed titles · Individual bids per product</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-keyword">negative</span><div class="node-content"><div class="node-label">Exclude: all Brand EN keywords</div><div class="node-sub">Avoid cannibalization with Brand EN campaign</div></div></div>
+
+        <!-- PMAX PARTAGÉ -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> ⚡ Performance Max — Catalogue complet <span class="node-tag">IA Google</span></div>
+            <div class="node-sub">Stratégie : Target ROAS 400 % · Budget : 40 % · Une seule campagne PMax — asset groups distincts par langue × catégorie</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Catégorie A — Vêtements femme</div><div class="node-sub">15 titres FR · 5 descriptions FR · Images lifestyle · Vidéo 30 s FR · Signal audience : acheteuses mode 25–45 FR</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Category A — Women's clothing</div><div class="node-sub">15 EN titles · 5 EN descriptions · Lifestyle images · 30s EN video · Audience signal: fashion shoppers 25–45 EN</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Catégorie B — Accessoires</div><div class="node-sub">Assets FR distincts · Signal audience : acheteurs cadeaux, fêtes · Angle : "cadeau parfait"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Category B — Accessories</div><div class="node-sub">Distinct EN assets · Audience signal: gift shoppers, holidays · Angle: "perfect gift"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-keyword">exclusions</span><div class="node-content"><div class="node-label">Termes de marque FR + EN + négatifs globaux bilingues</div><div class="node-sub">Liste partagée unique : [nommarque] + [brandname] + [concurrents FR] + [competitors EN] · Appliquée à toutes les campagnes</div></div></div>
+
+        <!-- RLSA FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🔄 RLSA — Panier abandonné</div>
+            <div class="node-sub">Stratégie : Target ROAS 700 % · Budget : 7,5 % · Audience : visiteurs panier non-converti 30 j · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Mots-clés génériques FR — RLSA uniquement</div><div class="node-sub">Bid adj : +50 % · Message FR : "Votre panier vous attend — livraison gratuite aujourd'hui" · Exclure : clients convertis</div></div></div>
+
+        <!-- RLSA EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🔄 RLSA — Abandoned cart</div>
+            <div class="node-sub">Strategy: Target ROAS 700% · Budget: 7.5% · Audience: non-converted cart visitors 30 days · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Generic keywords EN — RLSA only</div><div class="node-sub">Bid adj: +50% · EN message: "Your cart is waiting — free shipping today" · Exclude: converted customers</div></div></div>
+
+      </div>
+    </div>
+
+    <div class="section-title">Paramètres critiques</div>
+    <div class="settings-grid">
+      <div class="setting-item"><div class="setting-key">Flux produits (Google Merchant Center)</div><div class="setting-val">Deux flux distincts : FR et EN</div><div class="setting-note">Titres, descriptions et attributs traduits dans chaque flux. Un flux unique mal traduit nuit au Quality Score Shopping dans les deux langues. Utiliser le champ « language » dans GMC pour cibler chaque campagne Shopping au bon flux.</div></div>
+      <div class="setting-item"><div class="setting-key">Stratégie d'enchère PMax</div><div class="setting-val">Target ROAS 400 % — une seule campagne</div><div class="setting-note">PMax partage le budget et l'algorithme entre les asset groups FR et EN. Commencer 20 % sous le ROAS actuel. Ne jamais modifier le tROAS de plus de 15 % à la fois.</div></div>
+      <div class="setting-item"><div class="setting-key">Suivi de conversion</div><div class="setting-val">Valeur de commande dynamique — même pixel FR/EN</div><div class="setting-note">Un seul tag de conversion suffit si le site est bilingue sur le même domaine. Vérifier que la devise est identique (CAD) pour que le ROAS soit comparable entre les deux langues.</div></div>
+      <div class="setting-item"><div class="setting-key">Labels produits Shopping</div><div class="setting-val">Custom labels par marge (identiques FR/EN)</div><div class="setting-note">Custom label 0 : marge haute / moyenne / faible. Les mêmes produits dans les deux flux reçoivent les mêmes labels. Enchérir différemment selon la rentabilité réelle, pas la langue.</div></div>
+      <div class="setting-item"><div class="setting-key">Ajustements appareils</div><div class="setting-val">Analyser mobile vs desktop par langue</div><div class="setting-note">Le comportement mobile peut différer selon la langue (ex : marché EN souvent plus fort sur mobile). Appliquer les ajustements séparément dans chaque campagne FR et EN.</div></div>
+      <div class="setting-item"><div class="setting-key">Fenêtre d'attribution</div><div class="setting-val">30 jours clic / 1 jour vue</div><div class="setting-note">Uniforme pour FR et EN afin de comparer les performances entre les deux langues sur la même base. Allonger à 60–90 jours pour les produits à prix élevé.</div></div>
+    </div>
+
+    <div class="section-title">Erreurs fréquentes</div>
+    <div class="pitfalls">
+      <div class="pitfall"><span class="icon">⚠️</span>Utiliser un seul flux produits pour les deux langues. Un titre comme "women's coat / manteau femme" dans le même champ confusionne l'algorithme Shopping et réduit la pertinence dans les deux langues.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Fixer un tROAS trop ambitieux dès le départ. Google ne trouvera pas de conversions et réduira la diffusion. Commencer proche du ROAS actuel, puis augmenter par paliers de 15 % maximum.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Ne pas exclure les termes de marque FR et EN de PMax. Sans liste partagée bilingue, PMax cannibalise les deux campagnes Brand à coût plus élevé.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Mélanger des produits à haute et basse marge dans le même asset group PMax. Les marges réelles disparaissent dans l'optimisation du ROAS brut, quelle que soit la langue.</div>
+    </div>
+
+    <div class="section-title">Conseils senior</div>
+    <div class="tips">
+      <div class="tip"><span class="icon">💡</span>Segmenter Shopping par marge produit via custom labels, pas seulement par catégorie ou langue. Optimiser le profit réel, pas le chiffre d'affaires brut. Un bestseller FR et EN avec marge faible ne mérite pas le même ROAS cible qu'un produit à marge élevée.</div>
+      <div class="tip"><span class="icon">💡</span>Utiliser "New Customer Acquisition" dans PMax avec valeur de nouveau client majorée de +30 %. L'algorithme priorise alors l'acquisition vs la fidélisation dans les deux langues simultanément.</div>
+      <div class="tip"><span class="icon">💡</span>Période d'apprentissage Smart Bidding : 2–4 semaines. Toute modification du tROAS > 15 % relance la période à zéro dans toutes les campagnes concernées. Planifier les changements de façon groupée.</div>
+    </div>
+
+  </div>
+
+  <!-- ======================== CPA ======================== -->
+  <div class="panel" id="panel-cpa">
+
+    <div class="kpi-hero">
+      <div class="kpi-card main">
+        <div class="kpi-icon">🎯</div>
+        <div class="kpi-meta">
+          <div class="kpi-name">CPA — Cost Per Acquisition</div>
+          <div class="kpi-def">Coût moyen pour acquérir un client ou une conversion. Idéal quand toutes les conversions ont une valeur similaire (abonnement, inscription, achat uniforme). L'objectif est de rester sous un seuil de rentabilité défini.</div>
+          <div class="kpi-formula">CPA = Dépenses totales ÷ Nombre de conversions · ex : 5 000 $ / 100 conv. = 50 $ CPA</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Contexte idéal</div>
+        <ul class="info-list">
+          <li>SaaS — acquisition d'abonnements</li>
+          <li>Services à prix fixe (formation, coaching)</li>
+          <li>E-commerce à panier moyen homogène</li>
+          <li>Min. 30–50 conversions/mois pour tCPA</li>
+        </ul>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Calcul du CPA cible</div>
+        <ul class="info-list">
+          <li>LTV client × taux de marge brute</li>
+          <li>= Revenus nets par client</li>
+          <li>CPA max = revenus nets × % acquisition acceptable</li>
+          <li>Ex : LTV 600 $ × 40 % marge = 240 $ · CPA max 80 $</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bilingual-note"><span class="icon">🌐</span><div><strong>Logique bilingue CPA :</strong> Brand + Concurrents et la campagne Non-Brand sont dupliqués FR/EN — les mots-clés transactionnels diffèrent fondamentalement entre les deux langues, et les taux de conversion peuvent varier. PMax est unique avec des asset groups bilingues distincts. Le RLSA est dupliqué pour que le message de relance corresponde à la langue dans laquelle l'utilisateur a navigué. Surveiller le CPA séparément par langue : un marché EN plus concurrentiel peut légitimer un tCPA plus élevé.</div></div>
+
+    <div class="section-title">Structure de compte recommandée</div>
+
+    <div class="tree">
+      <div class="tree-header">Compte Google Ads — SaaS / Service abonnement · Marché bilingue</div>
+      <div class="tree-body">
+
+        <!-- BRAND + CONCURRENTS FR -->
+        <div class="tree-node">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🏷️ Brand + Concurrents <span class="node-tag">CPA le plus bas</span></div>
+            <div class="node-sub">Stratégie : Target CPA 25 $ · Budget : 10 % · Exact match · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Brand exact FR</div><div class="node-sub">[marque] · [marque connexion] · [marque tarifs] · CTA : "Essai gratuit 14 jours"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Concurrents FR — alternative</div><div class="node-sub">[concurrent A alternative] · "meilleur que concurrent B" · Annonces : comparatif, avantages différenciants en français</div></div></div>
+
+        <!-- BRAND + CONCURRENTS EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🏷️ Brand + Competitors <span class="node-tag">Lowest CPA</span></div>
+            <div class="node-sub">Strategy: Target CPA $25 · Budget: 10% · Exact match · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Exact brand EN</div><div class="node-sub">[brand] · [brand login] · [brand pricing] · CTA: "Start free 14-day trial"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Competitors EN — alternative</div><div class="node-sub">[competitor A alternative] · "better than competitor B" · Ads: comparison, differentiating advantages in English</div></div></div>
+
+        <!-- NON-BRAND FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🎯 Non-Brand — Intention forte (bas de funnel) <span class="node-tag">Campagne principale</span></div>
+            <div class="node-sub">Stratégie : Target CPA 60 $ · Budget : 22,5 % · Réseau : Search uniquement · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Acheter / Souscrire / Tarifs FR</div><div class="node-sub">"logiciel gestion projet prix" · "acheter outil CRM" · "abonnement logiciel équipe"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Essai / Démo / Gratuit FR</div><div class="node-sub">"essai gratuit logiciel X" · "démo outil gestion" · CTA : essai 14 jours sans carte</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Problème / Solution FR</div><div class="node-sub">"comment gérer équipe remote" · "solution suivi projets PME" · Annonce : avant/après, résolution problème</div></div></div>
+
+        <!-- NON-BRAND EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🎯 Non-Brand — Strong intent (bottom funnel) <span class="node-tag">Core campaign</span></div>
+            <div class="node-sub">Strategy: Target CPA $60 · Budget: 22.5% · Network: Search only · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Buy / Subscribe / Pricing EN</div><div class="node-sub">"project management software pricing" · "buy CRM tool" · "team subscription software"</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Trial / Demo / Free EN</div><div class="node-sub">"free trial software X" · "management tool demo" · CTA: 14-day trial no credit card</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Problem / Solution EN</div><div class="node-sub">"how to manage remote team" · "project tracking solution SMB" · Ad: before/after, problem-solving angle</div></div></div>
+
+        <!-- RLSA FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🔄 RLSA — Visiteurs non-convertis</div>
+            <div class="node-sub">Stratégie : Target CPA 35 $ · Budget : 10 % · Audience : visiteurs 7–30 j, non-convertis · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Requêtes génériques FR — Audience RLSA uniquement</div><div class="node-sub">Bid adj : +30 % · Message FR : offre spéciale, témoignage client, urgence · Exclure : clients actifs</div></div></div>
+
+        <!-- RLSA EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🔄 RLSA — Non-converted visitors</div>
+            <div class="node-sub">Strategy: Target CPA $35 · Budget: 10% · Audience: 7–30 day visitors, non-converted · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Generic queries EN — RLSA only</div><div class="node-sub">Bid adj: +30% · EN message: special offer, client testimonial, urgency · Exclude: active customers</div></div></div>
+
+        <!-- PMAX -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> ⚡ Performance Max — Prospection <span class="node-tag">Croissance</span></div>
+            <div class="node-sub">Stratégie : Target CPA 75 $ · Budget : 15 % · Signal audience : convertisseurs passés similaires (FR + EN)</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Nouveaux clients — tous formats</div><div class="node-sub">Assets FR : témoignages, captures produit, vidéo démo FR · Exclure : clients actuels (Customer Match)</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> New customers — all formats</div><div class="node-sub">EN assets: testimonials, product screenshots, EN demo video · Exclude: current customers (Customer Match)</div></div></div>
+
+      </div>
+    </div>
+
+    <div class="section-title">Paramètres critiques</div>
+    <div class="settings-grid">
+      <div class="setting-item"><div class="setting-key">Stratégie d'enchère</div><div class="setting-val">Target CPA (tCPA) — séparé par langue</div><div class="setting-note">Le CPA naturel peut différer entre FR et EN selon la concurrence sur les mots-clés. Laisser chaque campagne calibrer son propre tCPA. Commencer à +20 % du CPA actuel par langue.</div></div>
+      <div class="setting-item"><div class="setting-key">Définition de conversion</div><div class="setting-val">1 seule conversion principale (bilingue)</div><div class="setting-note">Un seul événement de conversion (ex : "abonnement payant") sur le même domaine FR/EN. Ne jamais compter deux fois si l'utilisateur change de langue avant de convertir.</div></div>
+      <div class="setting-item"><div class="setting-key">Exclusions audiences</div><div class="setting-val">Customer Match — liste unique FR + EN</div><div class="setting-note">Une seule liste de clients existants suffit. Exclure de toutes les campagnes d'acquisition, dans les deux langues.</div></div>
+      <div class="setting-item"><div class="setting-key">Réseau</div><div class="setting-val">Search uniquement — désactiver Display</div><div class="setting-note">Le Display et Search partenaires diluent le CPA dans les deux langues. Désactiver sauf si le volume de conversions est insuffisant après 4 semaines.</div></div>
+    </div>
+
+    <div class="section-title">Erreurs fréquentes</div>
+    <div class="pitfalls">
+      <div class="pitfall"><span class="icon">⚠️</span>Utiliser un seul tCPA pour FR et EN. Le marché anglophone peut être plus compétitif et nécessiter un tCPA différent. Séparer les campagnes permet de calibrer correctement sans pénaliser la langue plus efficace.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Compter les micro-conversions dans le CPA principal. Le tCPA optimisera vers le signal le plus facile, pas le plus rentable — dans les deux langues.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Baisser le tCPA trop rapidement après l'apprentissage. Chaque changement de plus de 10 % relance la période d'apprentissage de 2 semaines dans toutes les campagnes modifiées.</div>
+    </div>
+
+    <div class="section-title">Conseils senior</div>
+    <div class="tips">
+      <div class="tip"><span class="icon">💡</span>Analyser les taux de conversion FR vs EN après 4–6 semaines. Si l'un des marchés convertit nettement mieux à CPA égal, réallouer le budget en conséquence plutôt que de maintenir un split 50/50 artificiel.</div>
+      <div class="tip"><span class="icon">💡</span>Si le volume de conversions est faible (moins de 30/mois par langue), regrouper FR + EN dans une seule campagne Non-Brand avec ciblage bilingue. L'algorithme a besoin d'un minimum de données pour être stable — mieux vaut une campagne robuste que deux campagnes affamées.</div>
+      <div class="tip"><span class="icon">💡</span>Segmenter par intention dans les groupes d'annonces. Un visiteur cherchant "prix logiciel CRM" a un CPA naturellement 2x plus bas que "logiciel gestion" — ne pas mélanger les intentions, quelle que soit la langue.</div>
+    </div>
+
+  </div>
+
+  <!-- ======================== LEADS ======================== -->
+  <div class="panel" id="panel-leads">
+
+    <div class="kpi-hero">
+      <div class="kpi-card main">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-meta">
+          <div class="kpi-name">CPL — Cost Per Lead</div>
+          <div class="kpi-def">Coût pour générer un contact qualifié (formulaire, appel, clavardage). KPI dominant en B2B, immobilier, services professionnels, où le cycle de vente est long et la conversion finale hors ligne.</div>
+          <div class="kpi-formula">CPL = Dépenses totales ÷ Leads générés · ex : 3 000 $ / 60 leads = 50 $ CPL</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Contexte idéal</div>
+        <ul class="info-list">
+          <li>B2B — ventes complexes, multi-décideurs</li>
+          <li>Immobilier, finance, droit, assurances</li>
+          <li>Services à valeur élevée (plus de 500 $ par transaction)</li>
+          <li>Cycle de vente de plus de 30 jours</li>
+        </ul>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Qualité vs quantité</div>
+        <ul class="info-list">
+          <li>CPL bas ≠ succès si leads non qualifiés</li>
+          <li>Suivre les leads jusqu'au CRM (conversions offline)</li>
+          <li>Mesurer le taux de fermeture par source et par langue</li>
+          <li>Qualifier : budget, autorité, besoin, délai</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bilingual-note"><span class="icon">🌐</span><div><strong>Logique bilingue CPL :</strong> Toutes les campagnes Search sont dupliquées FR/EN — en B2B services, les décideurs francophones et anglophones cherchent dans leur propre langue et répondent à des messages différents. Pages de destination distinctes par langue. Le Lead Form Ads est dupliqué pour que le formulaire s'affiche dans la langue de la recherche. RLSA dupliqué pour que le message de nurturing corresponde à la langue de la visite initiale. Surveiller le taux de qualification des leads par langue — dans certains marchés B2B, les leads EN ont un panier moyen plus élevé.</div></div>
+
+    <div class="section-title">Structure de compte recommandée</div>
+
+    <div class="tree">
+      <div class="tree-header">Compte Google Ads — Firme de services professionnels B2B · Marché bilingue</div>
+      <div class="tree-body">
+
+        <!-- BRAND FR -->
+        <div class="tree-node">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🏷️ Brand — Défense de marque <span class="node-tag">CPL le plus bas</span></div>
+            <div class="node-sub">Stratégie : Maximize Conversions · Budget : 5 % · CPA historique Brand : 3–8x moins cher · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Brand exact + navigational FR</div><div class="node-sub">[nomsociété] · [nomsite.com] · CTA : "Parler à un expert" + extension d'appel FR</div></div></div>
+
+        <!-- BRAND EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🏷️ Brand — Brand defence <span class="node-tag">Lowest CPL</span></div>
+            <div class="node-sub">Strategy: Maximize Conversions · Budget: 5% · Historical Brand CPA: 3–8x cheaper · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Exact brand + navigational EN</div><div class="node-sub">[companyname] · [website.com] · CTA: "Talk to an expert" + call extension EN</div></div></div>
+
+        <!-- SERVICES FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🎯 Services — Intention transactionnelle forte <span class="node-tag">Génération de leads principale</span></div>
+            <div class="node-sub">Stratégie : Target CPA (CPL cible) · Budget : 25 % · Réseau : Search seul · Géo : précis · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Service A — Consultation fiscale FR</div><div class="node-sub">"comptable fiscal entreprise" · "consultation fiscale PME" · Page de destination FR dédiée avec formulaire visible</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Service B — Audit comptable FR</div><div class="node-sub">"audit financier entreprise" · "vérification comptable PME" · Page de destination et CTA FR différents</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Urgence / Problème FR</div><div class="node-sub">"problème déclaration taxes" · "erreur comptabilité" · Message : urgence, résolution rapide</div></div></div>
+
+        <!-- SERVICES EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🎯 Services — Strong transactional intent <span class="node-tag">Core lead gen</span></div>
+            <div class="node-sub">Strategy: Target CPA (target CPL) · Budget: 25% · Network: Search only · Geo: precise · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Service A — Tax consulting EN</div><div class="node-sub">"business tax accountant" · "SMB tax consultation" · Dedicated EN landing page with visible form</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Service B — Accounting audit EN</div><div class="node-sub">"business financial audit" · "SMB accounting review" · Separate EN landing page and CTA</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Urgency / Problem EN</div><div class="node-sub">"tax filing problem" · "accounting error fix" · Message: urgency, fast resolution</div></div></div>
+
+        <!-- CONCURRENTS FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🔍 Concurrents — Conquête FR</div>
+            <div class="node-sub">Stratégie : Target CPA · Budget : 7,5 % · Annonces FR : comparatif, différenciateurs clés · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Noms concurrents FR + alternative</div><div class="node-sub">"concurrent A avis" · "alternative concurrent B" · NE PAS nommer le concurrent dans l'annonce (politique Google)</div></div></div>
+
+        <!-- CONCURRENTS EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🔍 Competitors — Conquest EN</div>
+            <div class="node-sub">Strategy: Target CPA · Budget: 7.5% · EN ads: comparison, key differentiators · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Competitor names EN + alternative</div><div class="node-sub">"competitor A reviews" · "competitor B alternative" · DO NOT name the competitor in the ad (Google policy)</div></div></div>
+
+        <!-- LEAD FORM FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 📱 Lead Form Ads — Mobile first <span class="node-tag">Volume mobile</span></div>
+            <div class="node-sub">Stratégie : Maximize Conversions · Budget : 7,5 % · Asset : Lead Form Extension in-SERP · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Mots-clés intention forte FR — appareil : mobile</div><div class="node-sub">Formulaire FR : prénom, courriel, téléphone, type de besoin · Disqualifier via questions filtres en français</div></div></div>
+
+        <!-- LEAD FORM EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 📱 Lead Form Ads — Mobile first <span class="node-tag">Mobile volume</span></div>
+            <div class="node-sub">Strategy: Maximize Conversions · Budget: 7.5% · Asset: Lead Form Extension in-SERP · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">High-intent keywords EN — device: mobile</div><div class="node-sub">EN form: first name, email, phone, type of need · Disqualify via filter questions in English</div></div></div>
+
+        <!-- RLSA FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🔄 RLSA + Display Remarketing — Nurturing FR</div>
+            <div class="node-sub">Stratégie : Target CPA · Budget : 5 % · Audience : visiteurs page de destination FR non-convertis 30 j</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Requêtes génériques + Display FR — RLSA uniquement</div><div class="node-sub">Message FR : preuve sociale, témoignage, étude de cas · Fréquence Display : max 5/semaine</div></div></div>
+
+        <!-- RLSA EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🔄 RLSA + Display Remarketing — Nurturing EN</div>
+            <div class="node-sub">Strategy: Target CPA · Budget: 5% · Audience: non-converted EN landing page visitors 30 days</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Generic queries + Display EN — RLSA only</div><div class="node-sub">EN message: social proof, testimonial, case study · Display frequency: max 5/week</div></div></div>
+
+      </div>
+    </div>
+
+    <div class="section-title">Paramètres critiques</div>
+    <div class="settings-grid">
+      <div class="setting-item"><div class="setting-key">Pages de destination</div><div class="setting-val">Page dédiée par langue et par service</div><div class="setting-note">Une page FR et une page EN pour chaque service. Message, CTA et formulaire dans la langue de la recherche. Rediriger automatiquement selon la langue détectée diminue le taux de conversion.</div></div>
+      <div class="setting-item"><div class="setting-key">Conversion offline</div><div class="setting-val">Import CRM → Google Ads (FR + EN)</div><div class="setting-note">Taguer les leads dans le CRM avec leur langue source. Importer séparément pour mesurer la qualité des leads FR vs EN et ajuster les tCPA en conséquence.</div></div>
+      <div class="setting-item"><div class="setting-key">Suivi des appels</div><div class="setting-val">Numéro dynamique distinct par langue</div><div class="setting-note">Numéro FR et numéro EN distincts pour l'attribution précise. Durée minimale : 90 secondes pour comptabiliser un appel comme lead qualifié.</div></div>
+      <div class="setting-item"><div class="setting-key">Ciblage géographique</div><div class="setting-val">Superposer langue + géo</div><div class="setting-note">Langue FR + géo Québec / Nouveau-Brunswick FR. Langue EN + géo Canada EN / Ontario. Ne pas cibler uniquement par géo — un anglophone au Québec doit voir l'annonce EN.</div></div>
+    </div>
+
+    <div class="section-title">Erreurs fréquentes</div>
+    <div class="pitfalls">
+      <div class="pitfall"><span class="icon">⚠️</span>Cibler la langue par géographie uniquement. Un anglophone à Montréal cherche en anglais — si la campagne FR est ciblée sur "Québec" sans filtre de langue, elle lui sert une annonce FR qu'il ignorera.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Utiliser la même page de destination pour FR et EN. Un prospect anglophone qui arrive sur une page en français quitte immédiatement. Le taux de rebond monte, le Quality Score chute, le CPL explose.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Optimiser uniquement sur le CPL sans mesurer la qualité par langue. Un CPL de 30 $ avec 5 % de fermeture est moins rentable qu'un CPL de 80 $ avec 25 %, peu importe la langue.</div>
+    </div>
+
+    <div class="section-title">Conseils senior</div>
+    <div class="tips">
+      <div class="tip"><span class="icon">💡</span>Analyser le taux de qualification des leads FR vs EN après 60 jours. Dans certains marchés B2B, les leads anglophone ont un panier moyen plus élevé — ajuster le tCPA EN à la hausse est alors justifié et rentable.</div>
+      <div class="tip"><span class="icon">💡</span>Implémenter les Lead Scoring Conversions : importer dans Google Ads les leads à différentes étapes du CRM avec des valeurs distinctes (lead chaud = 100 $, qualifié = 300 $, client = 1 000 $) — dans les deux langues.</div>
+      <div class="tip"><span class="icon">💡</span>En B2B, cibler les horaires de bureau (lundi–vendredi 8 h–18 h) avec ajustements +20 %. Réduire les enchères le week-end de -40 % — valable dans les deux langues, car les décisions B2B ne se prennent pas le dimanche.</div>
+    </div>
+
+  </div>
+
+  <!-- ======================== NOTORIETE ======================== -->
+  <div class="panel" id="panel-notoriete">
+
+    <div class="kpi-hero">
+      <div class="kpi-card main">
+        <div class="kpi-icon">📡</div>
+        <div class="kpi-meta">
+          <div class="kpi-name">CPM / Reach — Notoriété de marque</div>
+          <div class="kpi-def">Objectif d'exposition maximale à un public cible défini. On mesure la portée (reach), la fréquence d'exposition et la mémorisation. Moins de conversions directes, mais fondation essentielle du funnel complet.</div>
+          <div class="kpi-formula">CPM = (Coût total ÷ Impressions) × 1 000 · Fréquence = Impressions ÷ Reach unique</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Contexte idéal</div>
+        <ul class="info-list">
+          <li>Lancement de nouveau produit ou marque</li>
+          <li>Expansion dans un nouveau marché</li>
+          <li>Campagne saisonnière (Noël, Black Friday)</li>
+          <li>Budget branding distinct du budget performance</li>
+        </ul>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Métriques de succès</div>
+        <ul class="info-list">
+          <li>Brand Lift Study (via Google)</li>
+          <li>Recherches directes de la marque (+%)</li>
+          <li>Taux de mémorisation assistée / non assistée</li>
+          <li>Share of Voice vs concurrents</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bilingual-note"><span class="icon">🌐</span><div><strong>Logique bilingue Notoriété :</strong> Les campagnes YouTube et Display peuvent être gérées en une seule campagne avec des asset groups distincts par langue — Google diffuse le bon asset selon la langue de l'interface YouTube / navigateur de l'utilisateur. La campagne Demand Gen est unique avec des assets FR et EN distincts. La campagne Brand Search est la seule à être dupliquée FR/EN, car les requêtes de marque se font dans la langue de l'utilisateur.</div></div>
+
+    <div class="section-title">Structure de compte recommandée</div>
+
+    <div class="tree">
+      <div class="tree-header">Compte Google Ads — Lancement produit grand public · Marché bilingue</div>
+      <div class="tree-body">
+
+        <!-- YOUTUBE FR+EN -->
+        <div class="tree-node">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> 📺 YouTube — Video Reach <span class="node-tag">Impact maximal</span></div>
+            <div class="node-sub">Type : Video Reach Campaign · Stratégie : Target CPM ou Maximize Reach · Budget : 40 % · Langue : FR + EN dans la même campagne</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Non-skippable 15 s — Audience principale (In-Market)</div><div class="node-sub">Vidéo FR · Audience : In-Market, Démographie 25–45, langue FR · Fréquence cible : 3–5x / 7 jours</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Non-skippable 15s — Core audience (In-Market)</div><div class="node-sub">EN video · Audience: In-Market, Demographics 25–45, EN language · Target frequency: 3–5x / 7 days</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Bumper 6 s — Rappel de marque</div><div class="node-sub">Vidéo bumper FR · Audience : ayant vu le 15 s FR · Fréquence : +2–3x après exposition initiale</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Bumper 6s — Brand recall</div><div class="node-sub">EN bumper video · Audience: users who watched EN 15s · Frequency: +2–3x after initial exposure</div></div></div>
+
+        <!-- DISPLAY FR+EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> 🖼️ Display — Réseau Google <span class="node-tag">Couverture large</span></div>
+            <div class="node-sub">Type : Display Reach · Stratégie : Target CPM · Budget : 30 % · Responsive Display Ads bilingues</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Audiences affinitaires — Passionnés de [secteur] FR</div><div class="node-sub">Affinity audiences + Custom affinity (URLs concurrents FR, apps secteur) · Assets Display en français · Fréquence max : 7/semaine</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Affinity audiences — [Industry] enthusiasts EN</div><div class="node-sub">Affinity audiences + Custom affinity (EN competitor URLs, apps) · EN Display assets · Max frequency: 7/week</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Démographique + géographique FR</div><div class="node-sub">Âge, genre, revenu du foyer ciblé · Placements : sites francophones contextuellement pertinents</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Demographic + geographic EN</div><div class="node-sub">Age, gender, household income targeted · Placements: contextually relevant English-language sites</div></div></div>
+
+        <!-- DEMAND GEN FR+EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> 📧 Demand Gen — Formats sociaux Google</div>
+            <div class="node-sub">Type : Demand Gen · Stratégie : Maximize Clicks ou conversions légères · Budget : 20 % · Assets distincts FR et EN</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Gmail + YouTube feed + Discover — Image ads FR</div><div class="node-sub">Format natif FR · Signal audience : similaires aux convertisseurs FR · Objectif : engagement doux</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Gmail + YouTube feed + Discover — Image ads EN</div><div class="node-sub">Native EN format · Audience signal: similar to EN converters · Goal: soft engagement</div></div></div>
+
+        <!-- BRAND SEARCH FR -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🔍 Search — Brand keywords (protection) <span class="node-tag">Indispensable</span></div>
+            <div class="node-sub">Stratégie : Maximize Clicks · Budget : 5 % · Toujours actif pendant une campagne notoriété · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Brand exact FR — Capturer la demande générée</div><div class="node-sub">La campagne notoriété crée des recherches FR directes. Les capturer est critique. Sans Brand Search FR = fuites vers concurrents.</div></div></div>
+
+        <!-- BRAND SEARCH EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🔍 Search — Brand keywords (protection) <span class="node-tag">Essential</span></div>
+            <div class="node-sub">Strategy: Maximize Clicks · Budget: 5% · Always active during awareness campaign · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Exact brand EN — Capture generated demand</div><div class="node-sub">The awareness campaign creates direct EN searches. Capturing them is critical. Without Brand Search EN = leakage to competitors.</div></div></div>
+
+      </div>
+    </div>
+
+    <div class="section-title">Paramètres critiques</div>
+    <div class="settings-grid">
+      <div class="setting-item"><div class="setting-key">Créatifs vidéo</div><div class="setting-val">Deux versions : FR et EN</div><div class="setting-note">Produire une vidéo 15 s en français et une en anglais. Ne pas utiliser de sous-titres comme solution — une vidéo non localisée performe nettement moins bien en notoriété.</div></div>
+      <div class="setting-item"><div class="setting-key">Fréquence d'exposition</div><div class="setting-val">3–7 expositions / semaine par langue</div><div class="setting-note">La fréquence se gère par groupe d'annonces dans la même campagne. Surveiller séparément la fatigue FR et EN — un marché plus petit (ex : FR) peut saturer plus vite.</div></div>
+      <div class="setting-item"><div class="setting-key">Brand Lift Study</div><div class="setting-val">Disponible si budget > 100 000 $</div><div class="setting-note">Configurer la Brand Lift Study pour mesurer l'impact différencié en FR et EN. Les résultats peuvent varier selon la langue et guider la réallocation budgétaire.</div></div>
+      <div class="setting-item"><div class="setting-key">Exclusions de placements</div><div class="setting-val">Brand Safety obligatoire — listes bilingues</div><div class="setting-note">Exclure les contenus violents, politiques et fausses nouvelles dans les deux langues. Les listes d'exclusion Google sont en anglais — compléter avec des exclusions FR manuelles.</div></div>
+    </div>
+
+    <div class="section-title">Erreurs fréquentes</div>
+    <div class="pitfalls">
+      <div class="pitfall"><span class="icon">⚠️</span>Utiliser une seule vidéo avec sous-titres pour les deux langues. Le sous-titrage ne remplace pas une vidéo localisée pour la notoriété — le taux de mémorisation chute significativement.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Oublier les deux campagnes Brand Search (FR et EN). La campagne display/vidéo génère des recherches directes dans les deux langues — sans Brand Search bilingue, ces clics vont aux concurrents.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Mesurer le succès uniquement avec des conversions directes. Une campagne notoriété bien exécutée se voit dans les métriques Search (volume requêtes brand FR + EN) et Brand Lift, pas dans le CPA.</div>
+    </div>
+
+    <div class="section-title">Conseils senior</div>
+    <div class="tips">
+      <div class="tip"><span class="icon">💡</span>Construire un funnel complet même en campagne notoriété : Video Reach (exposition) → Remarketing Display (engagement) → RLSA Search (conversion). Le "branding pur" sans chemin de conversion est du budget perdu — dans les deux langues.</div>
+      <div class="tip"><span class="icon">💡</span>Utiliser les Custom Intent Audiences basées sur les URLs des articles de blogue concurrents — en français et en anglais séparément. Toucher une audience déjà engagée avec le contenu de ton industrie dans sa propre langue.</div>
+    </div>
+
+  </div>
+
+  <!-- ======================== VOLUME ======================== -->
+  <div class="panel" id="panel-volume">
+
+    <div class="kpi-hero">
+      <div class="kpi-card main">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-meta">
+          <div class="kpi-name">CPC / Volume de trafic qualifié</div>
+          <div class="kpi-def">Maximiser le volume de visiteurs qualifiés à un coût par clic maîtrisé. Utilisé quand la monétisation se fait via le contenu (publicité, affiliation, abonnements médias) ou en phase de test pré-conversion.</div>
+          <div class="kpi-formula">CPC = Coût total ÷ Clics · CTR = Clics ÷ Impressions × 100 · CPV = Coût ÷ Visiteurs qualifiés</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Contexte idéal</div>
+        <ul class="info-list">
+          <li>Médias / blogues monétisés (CPM, affiliation)</li>
+          <li>Phase de test avant configuration de conversion</li>
+          <li>Événements avec inscription gratuite</li>
+          <li>SEO combiné : combler les lacunes organiques</li>
+        </ul>
+      </div>
+      <div class="kpi-card">
+        <div class="info-card-title">Métriques complémentaires</div>
+        <ul class="info-list">
+          <li>Taux de rebond (moins de 50 % = bon trafic)</li>
+          <li>Pages par session (plus de 2 = engagement)</li>
+          <li>Durée de session (plus de 2 minutes)</li>
+          <li>Retour sur investissement par source et par langue</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bilingual-note"><span class="icon">🌐</span><div><strong>Logique bilingue Volume :</strong> Les campagnes Search long-tail sont dupliquées FR/EN — les requêtes informationnelles diffèrent complètement entre les deux langues et les volumes de recherche sont indépendants. Le Display contextuel peut être géré en une seule campagne avec des groupes d'annonces distincts par langue. PMax est unique avec assets bilingues. Mesurer le CPC et le taux d'engagement séparément par langue — le trafic FR peut être moins cher mais moins volumineux selon le secteur.</div></div>
+
+    <div class="section-title">Structure de compte recommandée</div>
+
+    <div class="tree">
+      <div class="tree-header">Compte Google Ads — Média / Événement / Test marché · Bilingue</div>
+      <div class="tree-body">
+
+        <!-- SEARCH FR -->
+        <div class="tree-node">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-fr">FR</span> 🎯 Search — Intentions fortes long-tail <span class="node-tag">Trafic le plus qualifié</span></div>
+            <div class="node-sub">Stratégie : Maximize Clicks avec CPC max · Budget : 25 % · Expression + Exact match · Langue : français</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Requêtes spécifiques Thème A — FR</div><div class="node-sub">"comment [action spécifique]" · "guide [sujet]" · "[sujet] pour débutants" · CPC max : 1,50 $</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">Requêtes spécifiques Thème B — FR</div><div class="node-sub">Long-tail informationnelle + commerciale FR · Exclure : termes trop génériques (faible pertinence)</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label">DSA — Contenu du site FR</div><div class="node-sub">Cibles : toutes les pages de contenu FR · Exclure : page d'accueil, pages de conversion · Capture requêtes FR manquées</div></div></div>
+
+        <!-- SEARCH EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-en">EN</span> 🎯 Search — Strong long-tail intent <span class="node-tag">Highest-quality traffic</span></div>
+            <div class="node-sub">Strategy: Maximize Clicks with max CPC · Budget: 25% · Phrase + Exact match · Language: English</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Specific queries Theme A — EN</div><div class="node-sub">"how to [specific action]" · "guide [topic]" · "[topic] for beginners" · Max CPC: $1.50</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">Specific queries Theme B — EN</div><div class="node-sub">Informational + commercial EN long-tail · Exclude: overly generic terms (low relevance)</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">group</span><div class="node-content"><div class="node-label">DSA — EN site content</div><div class="node-sub">Targets: all EN content pages · Exclude: homepage, conversion pages · Captures missed EN queries</div></div></div>
+
+        <!-- DISPLAY CONTEXTUEL FR+EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> 🖼️ Display — Ciblage contextuel <span class="node-tag">Volume + pertinence</span></div>
+            <div class="node-sub">Stratégie : Maximize Clicks · Budget : 30 % · Ciblage : mots-clés contextuels + placements · Groups distincts par langue</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Ciblage contextuel — mots-clés de contenu FR</div><div class="node-sub">Google place les annonces sur des pages FR dont le contenu correspond · Bannières en français · CPC typiquement 3–5x moins cher que Search</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Contextual targeting — EN content keywords</div><div class="node-sub">Google places ads on EN pages matching content · English banners · CPC typically 3–5x cheaper than Search</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Placements manuels — Sites sectoriels FR</div><div class="node-sub">20–50 sites francophones pertinents · Qualité du trafic > volume · Exclure après 2 semaines si rebond > 70 %</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">groupe</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> Manual placements — EN industry sites</div><div class="node-sub">20–50 relevant English-language sites · Traffic quality > volume · Exclude after 2 weeks if bounce rate > 70%</div></div></div>
+
+        <!-- PMAX FR+EN -->
+        <div class="tree-node camp-sep">
+          <span class="node-badge badge-campaign">campagne</span>
+          <div class="node-content">
+            <div class="node-label"><span class="lp lp-shared">FR + EN</span> ⚡ Performance Max — Prospection large</div>
+            <div class="node-sub">Stratégie : Maximize Clicks · Budget : 20 % · Signal : visiteurs engagés du site (FR + EN)</div>
+          </div>
+        </div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">├─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-fr">FR</span> Tous formats — contenus FR</div><div class="node-sub">Assets FR : textes engageants, visuels · URL expansion : pages de contenu FR uniquement, exclure pages de sortie</div></div></div>
+        <div class="tree-node"><span class="tree-indent"></span><span class="tree-connector">└─</span><span class="node-badge badge-adgroup">asset group</span><div class="node-content"><div class="node-label"><span class="lp lp-en">EN</span> All formats — EN content</div><div class="node-sub">EN assets: engaging copy, visuals · URL expansion: EN content pages only, exclude exit pages</div></div></div>
+
+      </div>
+    </div>
+
+    <div class="section-title">Paramètres critiques</div>
+    <div class="settings-grid">
+      <div class="setting-item"><div class="setting-key">Stratégie d'enchère</div><div class="setting-val">Maximize Clicks + CPC max par langue</div><div class="setting-note">Le CPC moyen peut différer entre FR et EN selon la concurrence dans le secteur. Définir un plafond CPC réaliste séparément pour chaque campagne Search. Commencer avec 1,5x le CPC moyen estimé du secteur.</div></div>
+      <div class="setting-item"><div class="setting-key">Qualité du trafic</div><div class="setting-val">Connecter GA4 + objectifs d'engagement bilingues</div><div class="setting-note">Créer des événements GA4 distincts pour les pages FR et EN : durée > 2 min, > 3 pages vues, défilement > 75 %. Comparer l'engagement par langue pour identifier le marché le plus rentable.</div></div>
+      <div class="setting-item"><div class="setting-key">DSA — Cibles de pages</div><div class="setting-val">Flux de pages distinct par langue</div><div class="setting-note">Configurer un flux de pages FR et un flux EN dans les paramètres DSA. Le DSA ne doit jamais pointer vers des pages mixtes FR/EN — il génèrerait des annonces incohérentes.</div></div>
+      <div class="setting-item"><div class="setting-key">Surveillance des placements</div><div class="setting-val">Exclure les placements bas qualité (FR + EN)</div><div class="setting-note">Auditer les placements Display hebdomadairement dans les deux groupes. Les sites MFA (Made for Ads) existent dans les deux langues. Maintenir une liste d'exclusion bilingue partagée.</div></div>
+    </div>
+
+    <div class="section-title">Erreurs fréquentes</div>
+    <div class="pitfalls">
+      <div class="pitfall"><span class="icon">⚠️</span>Maximize Clicks sans CPC maximum. Google peut enchérir 20–30 $ par clic sur des requêtes non pertinentes — dans les deux langues. Toujours fixer un plafond réaliste par campagne.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Utiliser le DSA sur un site bilingue sans flux de pages séparés. Le DSA peut générer des annonces en franglais si les pages ne sont pas clairement segmentées par langue.</div>
+      <div class="pitfall"><span class="icon">⚠️</span>Confondre volume et qualité. Un CTR élevé avec un taux de rebond de 85 % indique une promesse d'annonce non tenue. Vérifier la cohérence annonce → page dans chaque langue séparément.</div>
+    </div>
+
+    <div class="section-title">Conseils senior</div>
+    <div class="tips">
+      <div class="tip"><span class="icon">💡</span>Utiliser le rapport Termes de recherche séparément pour FR et EN afin d'identifier les requêtes qui génèrent le trafic le plus engagé dans chaque langue. Les sujets performants peuvent différer selon la langue — créer des groupes d'annonces dédiés pour les meilleurs termes de chaque marché.</div>
+      <div class="tip"><span class="icon">💡</span>Configurer une conversion secondaire "Engagement" dans GA4 (défilement 75 % + temps > 90 s) pour les pages FR et EN séparément. Comparer l'engagement par langue permet d'identifier le marché le plus réceptif et de réallouer le budget en conséquence.</div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">Google Ads Senior — Structures par KPI · Marché bilingue FR/EN · Tommy · 2026</div>
+
+</div>
+
+<script>
+  const tabs = document.querySelectorAll('.kpi-tab');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const kpi = tab.dataset.kpi;
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + kpi).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
